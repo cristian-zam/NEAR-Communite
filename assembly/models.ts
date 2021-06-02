@@ -46,7 +46,7 @@ export class Ticket{
     status:Statuses
     votes : PersistentMap<AccountId,boolean>
     solver: AccountId 
-    voteCount: number
+    voteCount: u64
 
     /**
      * 
