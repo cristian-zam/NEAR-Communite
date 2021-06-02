@@ -44,8 +44,8 @@ export class Ticket{
     category: categories 
     location:Loc
     status:Statuses
-    votes : PersistentMap<AccountId,bool>
-    solver: AccountId
+    votes : PersistentMap<AccountId,boolean>
+    solver: AccountId 
     voteCount: number
 
     /**
@@ -62,8 +62,10 @@ export class Ticket{
         this.category= category
         this.location=location
         this.ticketOwner= ticketOwner
+        this.votes = new PersistentMap<AccountId,boolean>("votes")
         this.votes.set(ticketOwner,true)
         this.voteCount=1
+        this.solver= ""
         this.status= Statuses.submited
     }
     /**
@@ -101,7 +103,7 @@ export class Ticket{
     }
 
     /**
-     * @todo avoid solver request the finalization of a ticket
+     * @todo add capabillity in order the solver can  request the finalization of a ticket
      * @param voter in this implementation it can be just the guy who submitted the ticket
      */
     finish(voter:AccountId):void{
