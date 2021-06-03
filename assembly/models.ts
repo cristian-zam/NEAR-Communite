@@ -1,4 +1,4 @@
-import { PersistentMap, PersistentVector } from "near-sdk-core";
+import { PersistentMap, u128,PersistentVector } from "near-sdk-core";
 
 type AccountId = string;
 type Address = string;
@@ -48,6 +48,7 @@ export class CitizenComplaint {
   solver: AccountId;
   voteCount: u64;
   timestamp: u64
+  balance: u128
 
   /**
    *
@@ -63,31 +64,24 @@ export class CitizenComplaint {
     location: Address,
     ticketOwner: AccountId,
     timestamp: u64,
-    id:u64
+    id:u64,
+    balance:u128
   ) {
     this.title = title;
     this.description = description;
     this.category = category;
     this.location = location;
     this.ticketOwner = ticketOwner;
-    this.votes = new PersistentMap<AccountId, boolean>("votes");
+    this.votes = new PersistentMap<AccountId, boolean>("v");
     this.votes.set(ticketOwner, true);
     this.voteCount = 1;
     this.solver = "";
     this.status = Statuses.submited;
     this.timestamp=timestamp
     this.id=id
+    this.balance =balance
   }
-  /**
-   * anyone can add a vote for this ticket
-   * @param voter string accountid
-   */
-  addVote(voter: AccountId): void {
-      let complaint  = complaints[<i32>this.id]
-      complaint.voteCount+=1
-      complaint.votes.set(voter, true)
-      complaints.replace(<i32>this.id, complaint)
-  }
+
   /**
    * only who already voted can revert it
    * @param voter string accountid
@@ -120,4 +114,10 @@ export class CitizenComplaint {
   }
 }
 
+
+/**
+ * STORAGE
+ */
 export let complaints = new PersistentVector<CitizenComplaint>("complaint");
+export let solversmap = new PersistentMap<AccountId, bool>("solvs")
+export let usercomplaints= new PersistentMap<AccountId,u32>("users")
