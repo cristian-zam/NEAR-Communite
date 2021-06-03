@@ -37,15 +37,17 @@ export enum Statuses {
  */
 @nearBindgen
 export class CitizenComplaint {
+  id:u64
   ticketOwner: AccountId;
   title: string;
   description: string;
   category: categories;
   location: Address;
   status: Statuses;
-  votes: PersistentMap<AccountId, boolean>;
+  votes: PersistentMap<AccountId,bool>;
   solver: AccountId;
   voteCount: u64;
+  timestamp: u64
 
   /**
    *
@@ -59,7 +61,9 @@ export class CitizenComplaint {
     description: string,
     category: categories,
     location: Address,
-    ticketOwner: AccountId
+    ticketOwner: AccountId,
+    timestamp: u64,
+    id:u64
   ) {
     this.title = title;
     this.description = description;
@@ -71,16 +75,18 @@ export class CitizenComplaint {
     this.voteCount = 1;
     this.solver = "";
     this.status = Statuses.submited;
+    this.timestamp=timestamp
+    this.id=id
   }
   /**
    * anyone can add a vote for this ticket
    * @param voter string accountid
    */
   addVote(voter: AccountId): void {
-    if (!this.votes.get(voter, false) && this.status != Statuses.done) {
-      this.votes.set(voter, true);
-      this.voteCount += 1;
-    }
+      let complaint  = complaints[<i32>this.id]
+      complaint.voteCount+=1
+      complaint.votes.set(voter, true)
+      complaints.replace(<i32>this.id, complaint)
   }
   /**
    * only who already voted can revert it
@@ -114,4 +120,4 @@ export class CitizenComplaint {
   }
 }
 
-export const complaints = new PersistentVector<CitizenComplaint>("complaint");
+export let complaints = new PersistentVector<CitizenComplaint>("complaint");

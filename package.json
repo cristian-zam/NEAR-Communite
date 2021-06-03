@@ -9,7 +9,10 @@
   "scripts": {
     "build": "asb",
     "build:debug": "asb --target debug",
-    "test": "asp --nologo"
+    "test": "asp --nologo",
+    "devploy": "near dev-deploy",
+    "deploy": "near deploy",
+    "buildevploy": "npm run build && npm run devploy"
   },
   "dependencies": {
     "near-sdk-as": "2.2.4"
