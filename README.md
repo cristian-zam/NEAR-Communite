@@ -1,101 +1,184 @@
-near-city-hall-dao
+📄 Introduction to communite
 ==================
 
-This app was initialized with [create-near-app]
+Communite is a smart contract that allows citizens to create and store complaints or suggestions about the state of their community using the NEAR protocol in order to have a transparent, reliable and safe space where they can express their problems. The following are the main functionalities of this smart contract:
 
+1. Create a complaint or suggestion.
+2. Get all the complaints living on the smart contract to know your status (Submited, In progress and Done).
+3. Get only the complaints that I already create. 
+4. Vote on a complaint or suggestion from other to give more weight.
+5. Change the status of a complaint (Submited, In progress and Done) if I'm the owner.
 
-Quick Start
+📦 Locally installation
 ===========
 
-To run this project locally:
+To run this project locally you need to follow the next steps:
 
-1. Prerequisites: Make sure you've installed [Node.js] ≥ 12
-2. Install dependencies: `yarn install`
-3. Run the local development server: `yarn dev` (see `package.json` for a
-   full list of `scripts` you can run with `yarn`)
+Step 1: Prerequisites
+------------------------------
 
-Now you'll have a local development environment backed by the NEAR TestNet!
-
-Go ahead and play with the app and the code. As you make code changes, the app will automatically reload.
-
-
-Exploring The Code
-==================
-
-1. The "backend" code lives in the `/contract` folder. See the README there for
-   more info.
-2. The frontend code lives in the `/src` folder. `/src/index.html` is a great
-   place to start exploring. Note that it loads in `/src/index.js`, where you
-   can learn how the frontend connects to the NEAR blockchain.
-3. Tests: there are different kinds of tests for the frontend and the smart
-   contract. See `contract/README` for info about how it's tested. The frontend
-   code gets tested with [jest]. You can run both of these at once with `yarn
-   run test`.
-
-
-Deploy
-======
-
-Every smart contract in NEAR has its [own associated account][NEAR accounts]. When you run `yarn dev`, your smart contract gets deployed to the live NEAR TestNet with a throwaway account. When you're ready to make it permanent, here's how.
-
-
-Step 0: Install near-cli (optional)
--------------------------------------
-
-[near-cli] is a command line interface (CLI) for interacting with the NEAR blockchain. It was installed to the local `node_modules` folder when you ran `yarn install`, but for best ergonomics you may want to install it globally:
+1. Make sure you've installed [Node.js] ≥ 12 (we recommend use [nvm])
+2. Make sure you've installed yarn: `npm install -g yarn`
+3. Install dependencies: `yarn install`
+4. Create a test near account [NEAR test account]
+5. Install the NEAR CLI globally: [near-cli] is a command line interface (CLI) for interacting with the NEAR blockchain
 
     yarn install --global near-cli
 
-Or, if you'd rather use the locally-installed version, you can prefix all `near` commands with `npx`
+Step 2: Configure your NEAR CLI
+-------------------------------
 
-Ensure that it's installed with `near --version` (or `npx near --version`)
+Configure your near-cli to authorize your test account recently created:
 
+    near login
 
-Step 1: Create an account for the contract
-------------------------------------------
+Step 3: Build and make a smart contract development deploy  
+--------------------------------
 
-Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `near-city-hall-dao.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet], here's how to create `near-city-hall-dao.your-name.testnet`:
-
-1. Authorize NEAR CLI, following the commands it gives you:
-
-      near login
-
-2. Create a subaccount (replace `YOUR-NAME` below with your actual account name):
-
-      near create-account near-city-hall-dao.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+Build the communite smart contract code and deploy the local development server: `yarn buildevploy` (see `package.json` for a full list of `scripts` you can run with `yarn`). This script return to you a provisional smart contract deployed (save it to use later)
 
 
-Step 2: set contract name in code
----------------------------------
-
-Modify the line in `src/config.js` that sets the account name of the contract. Set it to the account id you used above.
-
-    const CONTRACT_NAME = process.env.CONTRACT_NAME || 'near-city-hall-dao.YOUR-NAME.testnet'
+Congratulations, now you'll have a local development environment running on the NEAR TestNet! 🥳
 
 
-Step 3: deploy!
----------------
+📑 Exploring the communite smart contract methods 
+==================
 
-One command:
+The following commands allow you to interact with the smart contract methods using the near cli (for this you need to have a provisional smart contract deployed).
 
-    yarn deploy
+Information: the commands will require especific data (category, status)
+ 
+Category values: 
 
-As you can see in `package.json`, this does two things:
+    0. the value 0 represents a Lights problem.
+    1. the value 1 represents a Street problem.  
+    2. the value 2 represents a Neighborhoodh problem.  
+    3. the value 1 represents a Water problem.  
 
-1. builds & deploys smart contract to NEAR TestNet
-2. builds & deploys frontend code to GitHub using [gh-pages]. This will only work if the project already has a repository set up on GitHub. Feel free to modify the `deploy` script in `package.json` to deploy elsewhere.
+
+Command to make a complaint: 
+--------------------------------------------
+
+```bash
+near call <your deployed contract> addNewComplaint '{"title": "string","description":"string","category":integer,"location":"string"}' --account-id <your test account>
+```
+
+Command to get all the complaint created:
+--------------------------------------------
+
+```bash
+near view <your deployed contract> getComplaints
+```
+
+Command to get all my complaints created:
+--------------------------------------------
+
+```bash
+near call <your deployed contract> getNumberOfComplaints --accountId <your test account>
+```
+
+Command to get the number of complaints created:
+--------------------------------------------
+
+```bash
+near view <your deployed contract> getNComplaints
+```
 
 
-Troubleshooting
-===============
+Command to see a specific complaint information: 
+--------------------------------------------
 
-On Windows, if you're seeing an error containing `EPERM` it may be related to spaces in your path. Please see [this issue](https://github.com/zkat/npx/issues/209) for more details.
+```bash
+near view <your deployed contract> getComplaintInfo '{"id":integer (id from you complaint)}' --accountId <your test account>
+```
 
+Command to vote for a complaint: 
+--------------------------------------------
+
+```bash
+near call <your deployed contract> voteComplaint '{"id":integer (id from you complaint)}' --accountId <your test account>
+```
+
+Command to remote a vote for a complaint that I made: 
+--------------------------------------------
+
+```bash
+near call <your deployed contract> removeVote '{"id":integer (id from you complaint)}' --accountId <your test account>
+```
+
+Command to change the status (Submited to In progress) of a complaint if you are not the complaint owner (you need to be the solver of the complaint): 
+--------------------------------------------
+
+```bash
+near call <your deployed contract> takeComplaint '{"id":integer (id from you complaint)}' --accountId <your test account>
+```
+
+Command to change the status (In progress to Done) of a complaint if you're the complaint owner: 
+--------------------------------------------
+
+```bash
+near call <your deployed contract> finishComplaint '{"id":integer (id from you complaint)}' --accountId <your test account>
+```
+
+Command to change the status (Submited to In progress and In progress to Done) of a complaint if you're the complaint owner: 
+--------------------------------------------
+
+```bash
+near call <your deployed contract> finishComplaint '{"id":integer (id from you complaint)}' --accountId <your test account>
+```
+
+😎 Test communite smart contract 
+==================
+
+Testing is a part of the development, then to run the tests in the communite smart contract you need to run the follow command: 
+
+    yarn test
+
+this will execute the tests methods on the `assembly/__tests__/main.spect.js` file
+
+
+
+👩🏼‍🏫 Exploring and Explaining The Code 
+==================
+
+This is a explanation of the smart contract file system
+
+```bash
+├── README.md                                       # this file
+├── as-pect.config.js                               # configuration for as-pect (AssemblyScript unit testing)
+├── asconfig.json                                   # configuration file for Assemblyscript compiler
+├── assembly
+│   ├── __tests__
+│   │   ├── as-pect.d.ts                            # as-pect unit testing headers for type hints
+│   │   └── main.spec.ts                            # unit test for the contract
+│   ├── as_types.d.ts                               # AssemblyScript headers for type hint
+│   ├── index.ts                                    # contains the smart contract code
+│   ├── models.ts                                   # contains code for the models accesible to the smart contract
+│   └── tsconfig.json                               # Typescript configuration file
+├── neardev
+│   ├── dev-account                                 #in this file the provisional deploy smart contract account is saved
+│   └── dev-account.env                             #in this file the provisional deploy smart contract account is saved like a environment variable                             
+├── out
+│   └── main.wasm                                   # compiled smart contract code using to deploy
+├── package-lock.json                               # project manifest lock version
+├── package.json                                    # Node.js project manifest (scripts and dependencies)
+└── yarn.lock                                       # project manifest lock version
+```
+1. The smart contract code lives in the `/assambly` folder.
+2. To make a test deploy use the scripts in the `/package.json` file.
+
+
+
+Thanks to be interested in our project! 🤗
+======================
+Here we leave a [UX/UI] design proposal to develop the frontend part of the communite project.
+---------------------------
 
   [create-near-app]: https://github.com/near/create-near-app
   [Node.js]: https://nodejs.org/en/download/package-manager/
-  [jest]: https://jestjs.io/
   [NEAR accounts]: https://docs.near.org/docs/concepts/account
   [NEAR Wallet]: https://wallet.testnet.near.org/
   [near-cli]: https://github.com/near/near-cli
-  [gh-pages]: https://github.com/tschaub/gh-pages
+  [NEAR test account]: https://docs.near.org/docs/develop/basics/create-account#creating-a-testnet-account
+  [nvm]: https://github.com/nvm-sh/nvm
+  [UX/UI]: https://www.figma.com/file/Ywz4Y2SS4yB3KBV7EeCytF/Communify?node-id=0%3A1
