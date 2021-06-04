@@ -95,6 +95,9 @@ export function removeVote(id: i32):CitizenComplaint{
 }
 
 
+/**
+ * 
+
 
 export function donate(id:i32):CitizenComplaint{
 
@@ -111,6 +114,8 @@ export function donate(id:i32):CitizenComplaint{
    return complaint
 
 }
+ */
+
 
 /**
  * solvers can take the comaplaint that they wish
@@ -184,7 +189,7 @@ export function getComplaintInfo(id : i32):CitizenComplaint{
  * 
  * @returns will return the metadata of the complaints
  */
-export function numberOfTickets(): u64 {
+export function getNComplaints(): u64 {
   return complaints.length;
 }
 
